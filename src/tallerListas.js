@@ -832,10 +832,11 @@ un nombre, un álbum, el artista, la duración en segundos de la pista y número
 estrellas que usted les ha asignado(Entre 1 y 5).
 
 */
-
+//*************************************************************************************************
 //1. Definir la estructura que almacena cada canción
 
 let canciones = {nom:"", art:"", alb:"", dur:"", cal:""}
+//*************************************************************************************************
 
 //2. Crear 10 instancias con sus canciones favoritas
 
@@ -857,7 +858,7 @@ Ahora suponga que usted quiere guardar sus canciones favoritas como una lista de
 reproducción en JavaScript (lista de objetos). Para esta lista de canciones implemente
 las siguientes funciones:
 */
-
+//*************************************************************************************************
 //1. Búsqueda de canciones por nombre de canción. Debe retornar una canción o
 //   vacío en caso de no encontrarla.
 
@@ -887,6 +888,7 @@ function buscarCancion (cancion, lista){
 //console.log(buscarCancion('One', canciones));
 //console.log(buscarCancion('Paranoid', canciones));
 
+//*************************************************************************************************
 //2. Búsqueda de canciones por arista.
 
 /*  contrato: string, lista => lista 
@@ -915,6 +917,7 @@ function buscarArtista(artista, lista){
 //console.log(buscarArtista('Audioslave', canciones));
 //console.log(buscarArtista('Metallica', canciones));
 
+//*************************************************************************************************
 //3. Duración de la lista de reproducción en el formato “horas:minutos:segundos”
 /*  contrato: lista => numero
     proposito: calcular la duracion de la lista de reproduccion de las canciones.
@@ -941,6 +944,7 @@ function formatoHMS(tiempo){
 }
 //formatoHMS(duracionTotal(canciones));
 
+//*************************************************************************************************
 //4. Todas las canciones con al menos menos de 2 estrellas
 /*  contrato: lista => lista
     proposito: mostrar una lista con las canciones que tienen 2 o menos estrellas
@@ -961,9 +965,150 @@ function  calificacion2(lista){
             return cons(first(lista), calificacion2(rest(lista)));
         }
         else {
-           return cons(first(rest(lista)), calificacion2(rest(lista)));
+           return calificacion2(rest(lista));
         }
     }
 }
+//console.log(calificacion2(canciones));
 
-console.log(calificacion2(canciones));
+//*************************************************************************************************
+//5. Todas las canciones con de 5 estrellas
+/*  contrato: lista => lista
+    proposito: mostrar una lista con las canciones que tienen 5 estrellas
+
+    ejemplos: canciones : = Du hast
+                            Somebody to love
+                            ike a stone
+                      
+*/
+
+function  calificacion5(lista){
+    if (isEmpty(lista)){
+        return [];
+    }
+    else {
+        if (first(lista).cal == 5){
+            return cons(first(lista), calificacion5(rest(lista)));
+        }
+        else {
+           return calificacion5(rest(lista));
+        }
+    }
+}
+//console.log(calificacion5(canciones));
+
+//*************************************************************************************************
+//6. Imprima los títulos de las canciones y su duración.
+/*  contrato: lista => lista
+    proposito: construir una lista con los nombres de la canciones y su duracion.
+
+    ejemplos: canciones : = [ 'Paranoid', 172 ],
+                            [ 'Du hast', 260 ],
+                            [ 'Steel', 258 ],
+                            [ 'Head of Nasa', 465 ],
+                            [ 'Conquer or die', 214 ],
+                            [ 'Somebody to love', 309 ],
+                            [ 'Blues boys tune', 442 ],
+                            [ 'Like a stone', 308 ],
+                            [ 'One', 446 ],
+                            [ 'Beat it', 298 ]
+                      
+*/
+
+function imprimirNomDur (list){
+    if (isEmpty(list)){
+        return [];
+    }
+    else {
+        return cons(append([first(list).nom], [first(list).dur]), imprimirNomDur(rest(list)));
+    }
+}
+//console.log(imprimirNomDur(canciones))
+
+//*************************************************************************************************
+// 7. Crear la lista de mejor a peor canción
+/*  contrato: lista => lista
+    proposito: construir una lista en orden ascendente con la calificacion 
+                de mejor cancion a peor cancion.
+
+    ejemplos: canciones : = [ 'Du hast', 5],
+                            [ 'Somebody to love', 5],
+                            [ 'Like a stone, 5 ],
+                            [ 'Paranoid', 4 ],
+                            [ 'Conquer or die', 4],
+                            [ 'Blues boys tune', 4 ],
+                            [ 'Steel', 3 ],
+                            [ 'Head of Nasa', 2 ],
+                            [ 'One', 1 ],
+                            [ 'Beat it', 1 ]    
+*/
+
+function ordenAsc(list){
+    if (longitud(list) == 0){
+        return  [];
+    }
+    else {
+        return cons(append([menorCal(list).nom], [menorCal(list).cal]), ordenAsc(deleteMenorCal(list)));
+    }
+}
+//console.log(ordenAsc(canciones));
+
+// funcion que retorna la cancion con menor calificacion.
+function menorCal(list){
+    if (longitud(list) == 1){
+        return first(list);
+    }
+    else {
+        if (first(list).cal < first(rest(list)).cal){
+            return menorCal(rest(list));
+        }
+        else {
+            return menorCal(cons(first(list), rest(rest(list))));
+        }
+    }
+}
+//console.log(menorCal(canciones));
+
+// funcion que elimina la menor calificacion de una lista.
+function deleteMenorCal(list){
+    if (menorCal(list).cal == first(list).cal){
+        return rest(list);
+    }
+    else {
+        return cons(first(list), deleteMenorCal(rest(list)));
+    }
+}
+//console.log(deleteMenorCal(canciones));
+
+//*************************************************************************************************
+// 8.  Eliminar la n-ésima canción
+
+/*  contrato: lista, numero => lista
+    proposito: eliminar la n-esima cancion de la lista canciones.
+
+    ejemplos: (canciones, 10) = [ 'Du hast', 5],
+                                [ 'Somebody to love', 5],
+                                [ 'Like a stone, 5 ],
+                                [ 'Paranoid', 4 ],
+                                [ 'Conquer or die', 4],
+                                [ 'Blues boys tune', 4 ],
+                                [ 'Steel', 3 ],
+                                [ 'Head of Nasa', 2 ],
+                                [ 'One', 1 ],   
+*/
+
+function eliminarCancion(lista, posicion){
+    if (isEmpty(lista)) {
+        return [];
+    }
+    else {
+        if (posicion == 0) {
+            return (rest(lista));
+        }
+        else {
+            return cons(first(lista), eliminarCancion(rest(lista), posicion-1));
+        }
+    }
+}
+//console.log(eliminarCancion(canciones, 9));
+
